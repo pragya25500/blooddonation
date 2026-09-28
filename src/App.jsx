@@ -1,69 +1,60 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import React from "react";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+} from "react-router-dom";
 
 import LandingPage from "./pages/LandingPage/LandingPage";
 import Login from "./pages/Login/Login";
 import Register from "./pages/Register/Register";
 import RequesterDashboard from "./pages/RequesterDashboard/RequesterDashboard";
 import BloodRequest from "./pages/BloodRequest/BloodRequest";
+import DonorStatus from "./pages/DonorStatus/DonorStatus";
 
-// Admin
-import AdminDashboard from "./pages/AdminDashboard/AdminDashboard";
+import "./App.css";
 
 function App() {
   return (
     <BrowserRouter>
-
       <Routes>
 
-        {/* ================= HOME ================= */}
-
+        {/* HOME */}
         <Route
           path="/"
           element={<LandingPage />}
         />
 
-
-        {/* ================= LOGIN ================= */}
-
+        {/* AUTH */}
         <Route
           path="/login"
           element={<Login />}
         />
-
-
-        {/* ================= REGISTER ================= */}
 
         <Route
           path="/register"
           element={<Register />}
         />
 
-
-        {/* ================= REQUESTER DASHBOARD ================= */}
-
+        {/* DASHBOARD */}
         <Route
           path="/requester-dashboard"
           element={<RequesterDashboard />}
         />
 
-
-        {/* ================= BLOOD REQUEST ================= */}
-
+        {/* BLOOD REQUEST */}
         <Route
           path="/blood-request"
           element={<BloodRequest />}
         />
 
-
-        {/* ================= ADMIN DASHBOARD ================= */}
-
+        {/* DONOR MATCHING */}
         <Route
-          path="/admin-dashboard"
-          element={<AdminDashboard />}
+          path="/donor-status"
+          element={<DonorStatus />}
         />
 
       </Routes>
-
     </BrowserRouter>
   );
 }

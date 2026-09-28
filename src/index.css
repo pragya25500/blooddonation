@@ -1,32 +1,38 @@
-/* =========================================
-   GLOBAL CSS
-========================================= */
-
 * {
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
 }
 
-html,
-body,
-#root {
+html {
   width: 100%;
   min-height: 100%;
-  margin: 0;
-  padding: 0;
 }
 
 body {
+  width: 100%;
+  min-height: 100vh;
+
   margin: 0;
 
-  font-family:
-    Arial,
-    Helvetica,
-    sans-serif;
+  background: #f4faff;
 
-  background: #f4f9fd;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 button,
-input {
-  font-family: inherit;
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
 }

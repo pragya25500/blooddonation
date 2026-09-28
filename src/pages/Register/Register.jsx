@@ -9,16 +9,20 @@ function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [bloodGroup, setBloodGroup] = useState("O+");
+  const [location, setLocation] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const handleRegister = (event) => {
     event.preventDefault();
 
+    // Check required fields
     if (
       name.trim() === "" ||
       email.trim() === "" ||
       phone.trim() === "" ||
+      location.trim() === "" ||
       password.trim() === "" ||
       confirmPassword.trim() === ""
     ) {
@@ -26,22 +30,89 @@ function Register() {
       return;
     }
 
+    // Check password
     if (password !== confirmPassword) {
       alert("Passwords do not match.");
       return;
     }
 
+    // Get existing donors
+    const existingDonors =
+      JSON.parse(localStorage.getItem("donors")) || [];
+
+    // Check if email already exists
+    const emailAlreadyExists = existingDonors.some(
+      (donor) =>
+        donor.email.toLowerCase() === email.toLowerCase()
+    );
+
+    if (emailAlreadyExists) {
+      alert("An account with this email already exists.");
+      return;
+    }
+
+    // Create new donor
+    const newDonor = {
+      id: Date.now(),
+
+      name: name.trim(),
+
+      email: email.trim(),
+
+      phone: phone.trim(),
+
+      bloodGroup: bloodGroup,
+
+      location: location.trim(),
+
+      available: true,
+
+      role: "donor",
+    };
+
+    // Save donor
+    localStorage.setItem(
+      "donors",
+      JSON.stringify([
+        ...existingDonors,
+        newDonor,
+      ])
+    );
+
+    // Save current user information
     localStorage.setItem(
       "userName",
-      name
+      name.trim()
     );
 
     localStorage.setItem(
       "userEmail",
-      email
+      email.trim()
     );
 
-    alert("Account created successfully!");
+    localStorage.setItem(
+      "userPhone",
+      phone.trim()
+    );
+
+    localStorage.setItem(
+      "userBloodGroup",
+      bloodGroup
+    );
+
+    localStorage.setItem(
+      "userLocation",
+      location.trim()
+    );
+
+    localStorage.setItem(
+      "isLoggedIn",
+      "false"
+    );
+
+    alert(
+      "Donor account created successfully!"
+    );
 
     navigate("/login");
   };
@@ -68,8 +139,8 @@ function Register() {
           </h1>
 
           <p>
-            Create your account and connect
-            with people who need blood when
+            Create your account and become a
+            donor who can help save lives when
             it matters most.
           </p>
 
@@ -129,7 +200,7 @@ function Register() {
             </h2>
 
             <p className="register-subtitle">
-              Register to get started with LifeLink
+              Register as a blood donor
             </p>
 
 
@@ -143,11 +214,12 @@ function Register() {
 
               <div className="form-group">
 
-                <label>
+                <label htmlFor="name">
                   Full Name
                 </label>
 
                 <input
+                  id="name"
                   type="text"
                   placeholder="Enter your full name"
                   value={name}
@@ -163,11 +235,12 @@ function Register() {
 
               <div className="form-group">
 
-                <label>
+                <label htmlFor="email">
                   Email Address
                 </label>
 
                 <input
+                  id="email"
                   type="email"
                   placeholder="Enter your email"
                   value={email}
@@ -183,11 +256,12 @@ function Register() {
 
               <div className="form-group">
 
-                <label>
+                <label htmlFor="phone">
                   Phone Number
                 </label>
 
                 <input
+                  id="phone"
                   type="tel"
                   placeholder="Enter your phone number"
                   value={phone}
@@ -199,15 +273,90 @@ function Register() {
               </div>
 
 
+              {/* BLOOD GROUP */}
+
+              <div className="form-group">
+
+                <label htmlFor="bloodGroup">
+                  Blood Group
+                </label>
+
+                <select
+                  id="bloodGroup"
+                  value={bloodGroup}
+                  onChange={(event) =>
+                    setBloodGroup(event.target.value)
+                  }
+                >
+
+                  <option value="A+">
+                    A+
+                  </option>
+
+                  <option value="A-">
+                    A-
+                  </option>
+
+                  <option value="B+">
+                    B+
+                  </option>
+
+                  <option value="B-">
+                    B-
+                  </option>
+
+                  <option value="AB+">
+                    AB+
+                  </option>
+
+                  <option value="AB-">
+                    AB-
+                  </option>
+
+                  <option value="O+">
+                    O+
+                  </option>
+
+                  <option value="O-">
+                    O-
+                  </option>
+
+                </select>
+
+              </div>
+
+
+              {/* LOCATION */}
+
+              <div className="form-group">
+
+                <label htmlFor="location">
+                  Your Location
+                </label>
+
+                <input
+                  id="location"
+                  type="text"
+                  placeholder="Example: Kolkata"
+                  value={location}
+                  onChange={(event) =>
+                    setLocation(event.target.value)
+                  }
+                />
+
+              </div>
+
+
               {/* PASSWORD */}
 
               <div className="form-group">
 
-                <label>
+                <label htmlFor="password">
                   Password
                 </label>
 
                 <input
+                  id="password"
                   type="password"
                   placeholder="Create a password"
                   value={password}
@@ -223,11 +372,12 @@ function Register() {
 
               <div className="form-group">
 
-                <label>
+                <label htmlFor="confirmPassword">
                   Confirm Password
                 </label>
 
                 <input
+                  id="confirmPassword"
                   type="password"
                   placeholder="Confirm your password"
                   value={confirmPassword}
@@ -245,7 +395,7 @@ function Register() {
                 type="submit"
                 className="register-btn"
               >
-                Create Account
+                Create Donor Account
               </button>
 
             </form>

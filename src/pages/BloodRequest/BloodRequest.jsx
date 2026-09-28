@@ -1,213 +1,184 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 import "./BloodRequest.css";
 
 function BloodRequest() {
-
-  // ================================
-  // NAVIGATION
-  // ================================
-
   const navigate = useNavigate();
 
+  const [formData, setFormData] = useState({
+    patientName: "",
+    bloodGroup: "O+",
+    units: 3,
+    hospital: "",
+    location: "",
+    contact: "",
+    urgency: "Critical",
+  });
 
-  // ================================
-  // STATES
-  // ================================
+  const [error, setError] = useState("");
 
-  const [bloodGroup, setBloodGroup] = useState("O-");
-  const [urgency, setUrgency] = useState("Critical");
-  const [units, setUnits] = useState(3);
-  const [hospital, setHospital] = useState("");
+  const handleChange = (event) => {
+    const { name, value } = event.target;
 
+    setFormData((previous) => ({
+      ...previous,
+      [name]: value,
+    }));
 
-  // ================================
-  // BLOOD GROUPS
-  // ================================
+    setError("");
+  };
 
-  const bloodGroups = [
-    "A+",
-    "A-",
-    "B+",
-    "B-",
-    "AB+",
-    "AB-",
-    "O+",
-    "O-",
-  ];
+  const selectBloodGroup = (group) => {
+    setFormData((previous) => ({
+      ...previous,
+      bloodGroup: group,
+    }));
 
+    setError("");
+  };
 
-  // ================================
-  // INCREASE UNITS
-  // ================================
+  const selectUrgency = (urgency) => {
+    setFormData((previous) => ({
+      ...previous,
+      urgency,
+    }));
+
+    setError("");
+  };
 
   const increaseUnits = () => {
-    setUnits(units + 1);
+    setFormData((previous) => ({
+      ...previous,
+      units: Math.min(Number(previous.units) + 1, 10),
+    }));
   };
-
-
-  // ================================
-  // DECREASE UNITS
-  // ================================
 
   const decreaseUnits = () => {
-    if (units > 1) {
-      setUnits(units - 1);
-    }
+    setFormData((previous) => ({
+      ...previous,
+      units: Math.max(Number(previous.units) - 1, 1),
+    }));
   };
 
+  const handleSubmit = (event) => {
+    event.preventDefault();
 
-  // ================================
-  // SUBMIT REQUEST
-  // ================================
-
-  const handleSubmit = (e) => {
-
-    e.preventDefault();
-
-
-    // ================================
-    // CHECK HOSPITAL
-    // ================================
-
-    if (hospital.trim() === "") {
-
-      alert("Please enter hospital name.");
-
+    if (
+      !formData.patientName.trim() ||
+      !formData.hospital.trim() ||
+      !formData.location.trim() ||
+      !formData.contact.trim()
+    ) {
+      setError("Please fill in all required fields.");
       return;
     }
 
+    const request = {
+      patientName: formData.patientName.trim(),
+      bloodGroup: formData.bloodGroup,
+      units: Number(formData.units),
+      hospital: formData.hospital.trim(),
+      location: formData.location.trim(),
+      contact: formData.contact.trim(),
+      urgency: formData.urgency,
 
-    // ================================
-    // CREATE REQUEST DATA
-    // ================================
-
-    const requestData = {
-
-      bloodGroup: bloodGroup,
-
-      urgency: urgency,
-
-      units: units,
-
-      hospital: hospital.trim(),
-
-      status: "Pending",
-
+      // Dashboard status
+      status: "MATCHING",
+      matched: false,
+      createdAt: new Date().toISOString(),
     };
 
-
-    // ================================
-    // SAVE REQUEST
-    // ================================
-    // Temporary frontend storage.
-    // Later this will be replaced
-    // with Node.js + MySQL.
-
+    /*
+      Save request so the Requester Dashboard
+      can display it after matching.
+    */
     localStorage.setItem(
       "bloodRequest",
-      JSON.stringify(requestData)
+      JSON.stringify(request)
     );
 
+    /*
+      Remove old donor matching data
+      whenever a new request is created.
+    */
+    localStorage.removeItem("matchedDonors");
 
-    // ================================
-    // SHOW DATA IN CONSOLE
-    // ================================
-
-    console.log(
-      "Blood Request:",
-      requestData
+    /*
+      Notify dashboard if it is currently mounted.
+    */
+    window.dispatchEvent(
+      new Event("bloodRequestUpdated")
     );
 
-
-    // ================================
-    // SUCCESS MESSAGE
-    // ================================
-
-    alert(
-      "Blood request posted successfully!"
-    );
-
-
-    // ================================
-    // GO TO REQUESTER DASHBOARD
-    // ================================
-
-    navigate("/requester-dashboard");
-
+    /*
+      Send request directly to DonorStatus.
+    */
+    navigate("/donor-status", {
+      state: {
+        ...request,
+        stage: "searching",
+      },
+    });
   };
-
-
-  // ================================
-  // BACK BUTTON
-  // ================================
-
-  const handleBack = () => {
-
-    navigate("/requester-dashboard");
-
-  };
-
 
   return (
-
     <div className="blood-request-page">
 
+      {/* ================= HEADER ================= */}
 
-      {/* ==================================
-          HEADER
-      ================================== */}
-
-      <header className="request-header">
+      <header className="blood-request-header">
 
         <button
           type="button"
-          className="back-btn"
-          onClick={handleBack}
+          className="back-button"
+          onClick={() => navigate(-1)}
+          aria-label="Go back"
         >
           ←
         </button>
 
-        <h2>Emergency Request</h2>
+        <div className="blood-request-header-title">
+          Emergency Request
+        </div>
+
+        <div className="header-spacer"></div>
 
       </header>
 
+      {/* ================= MAIN ================= */}
 
-      {/* ==================================
-          MAIN CONTENT
-      ================================== */}
+      <main className="blood-request-container">
 
-      <main className="request-container">
+        <div className="request-heading">
 
+          <span className="request-label">
+            LIFELINK EMERGENCY SERVICE
+          </span>
 
-        {/* ==================================
-            TITLE
-        ================================== */}
-
-        <div className="request-title">
-
-          <h1>Need Blood Urgently?</h1>
+          <h1>
+            Need Blood Urgently?
+          </h1>
 
           <p>
-            Fill out the details below to notify donors
-            in your area immediately.
+            Fill out the details below to notify compatible
+            donors in your area immediately.
           </p>
 
         </div>
 
-
-        {/* ==================================
-            FORM
-        ================================== */}
+        {error && (
+          <div className="blood-request-error">
+            <span>!</span>
+            {error}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit}>
 
+          {/* ================= BLOOD GROUP ================= */}
 
-          {/* ==================================
-              BLOOD GROUP
-          ================================== */}
-
-          <section className="request-card blood-group-card">
+          <section className="request-card">
 
             <label className="section-label">
               BLOOD GROUP NEEDED
@@ -215,19 +186,26 @@ function BloodRequest() {
 
             <div className="blood-group-grid">
 
-              {bloodGroups.map((group) => (
+              {[
+                "A+",
+                "A-",
+                "B+",
+                "B-",
+                "AB+",
+                "AB-",
+                "O+",
+                "O-",
+              ].map((group) => (
 
                 <button
-                  key={group}
                   type="button"
-                  className={`blood-group-btn ${
-                    bloodGroup === group
-                      ? "selected"
-                      : ""
-                  }`}
-                  onClick={() =>
-                    setBloodGroup(group)
+                  key={group}
+                  className={
+                    formData.bloodGroup === group
+                      ? "blood-group-button selected"
+                      : "blood-group-button"
                   }
+                  onClick={() => selectBloodGroup(group)}
                 >
                   {group}
                 </button>
@@ -238,19 +216,11 @@ function BloodRequest() {
 
           </section>
 
+          {/* ================= URGENCY + UNITS ================= */}
 
-          {/* ==================================
-              URGENCY + UNITS
-          ================================== */}
+          <div className="request-two-column">
 
-          <div className="request-row">
-
-
-            {/* =================================
-                URGENCY LEVEL
-            ================================= */}
-
-            <section className="request-card urgency-card">
+            <section className="request-card">
 
               <label className="section-label">
                 URGENCY LEVEL
@@ -258,193 +228,189 @@ function BloodRequest() {
 
               <div className="urgency-options">
 
+                {[
+                  {
+                    name: "Critical",
+                    className: "critical",
+                  },
+                  {
+                    name: "High",
+                    className: "high",
+                  },
+                  {
+                    name: "Normal",
+                    className: "normal",
+                  },
+                ].map((item) => (
 
-                {/* CRITICAL */}
+                  <button
+                    key={item.name}
+                    type="button"
+                    className={
+                      formData.urgency === item.name
+                        ? "urgency-option selected"
+                        : "urgency-option"
+                    }
+                    onClick={() =>
+                      selectUrgency(item.name)
+                    }
+                  >
 
-                <button
-                  type="button"
-                  className="urgency-option"
-                  onClick={() =>
-                    setUrgency("Critical")
-                  }
-                >
+                    <span className="radio-circle">
+                      {formData.urgency === item.name
+                        ? "●"
+                        : ""}
+                    </span>
 
-                  <span
-                    className={`radio-circle ${
-                      urgency === "Critical"
-                        ? "checked"
-                        : ""
-                    }`}
-                  ></span>
+                    <span className="urgency-name">
+                      {item.name}
+                    </span>
 
-                  <span className="urgency-text">
-                    Critical
-                  </span>
+                    <span
+                      className={`urgency-dot ${item.className}`}
+                    ></span>
 
-                  <span className="critical-dot"></span>
+                  </button>
 
-                </button>
-
-
-                {/* HIGH */}
-
-                <button
-                  type="button"
-                  className="urgency-option"
-                  onClick={() =>
-                    setUrgency("High")
-                  }
-                >
-
-                  <span
-                    className={`radio-circle ${
-                      urgency === "High"
-                        ? "checked"
-                        : ""
-                    }`}
-                  ></span>
-
-                  <span className="urgency-text">
-                    High
-                  </span>
-
-                  <span className="high-dot"></span>
-
-                </button>
-
-
-                {/* NORMAL */}
-
-                <button
-                  type="button"
-                  className="urgency-option"
-                  onClick={() =>
-                    setUrgency("Normal")
-                  }
-                >
-
-                  <span
-                    className={`radio-circle ${
-                      urgency === "Normal"
-                        ? "checked"
-                        : ""
-                    }`}
-                  ></span>
-
-                  <span className="urgency-text">
-                    Normal
-                  </span>
-
-                  <span className="normal-dot"></span>
-
-                </button>
+                ))}
 
               </div>
 
             </section>
 
-
-            {/* =================================
-                UNITS NEEDED
-            ================================= */}
-
             <section className="request-card units-card">
 
-              <label className="section-label units-label">
-                UNITS NEEDED (PINTS)
+              <label className="section-label">
+                UNITS NEEDED
               </label>
 
               <div className="units-control">
 
                 <button
                   type="button"
-                  className="unit-btn"
                   onClick={decreaseUnits}
+                  disabled={formData.units <= 1}
                 >
                   −
                 </button>
 
-                <span className="unit-number">
-                  {units}
-                </span>
+                <strong>
+                  {formData.units}
+                </strong>
 
                 <button
                   type="button"
-                  className="unit-btn"
                   onClick={increaseUnits}
+                  disabled={formData.units >= 10}
                 >
                   +
                 </button>
 
               </div>
 
+              <span className="units-help">
+                Maximum 10 units
+              </span>
+
             </section>
 
           </div>
 
-
-          {/* ==================================
-              HOSPITAL NAME
-          ================================== */}
+          {/* ================= PATIENT DETAILS ================= */}
 
           <section className="request-card hospital-card">
 
-            <label className="section-label">
-              HOSPITAL NAME
-            </label>
+            <div className="form-group">
 
-            <input
-              type="text"
-              placeholder="e.g. City General Hospital"
-              value={hospital}
-              onChange={(e) =>
-                setHospital(e.target.value)
-              }
-            />
+              <label className="section-label">
+                PATIENT NAME
+              </label>
+
+              <input
+                type="text"
+                name="patientName"
+                placeholder="Enter patient name"
+                value={formData.patientName}
+                onChange={handleChange}
+              />
+
+            </div>
+
+            <div className="form-group">
+
+              <label className="section-label">
+                HOSPITAL NAME
+              </label>
+
+              <input
+                type="text"
+                name="hospital"
+                placeholder="e.g. City General Hospital"
+                value={formData.hospital}
+                onChange={handleChange}
+              />
+
+            </div>
+
+            <div className="form-group">
+
+              <label className="section-label">
+                LOCATION
+              </label>
+
+              <input
+                type="text"
+                name="location"
+                placeholder="e.g. Salt Lake, Kolkata"
+                value={formData.location}
+                onChange={handleChange}
+              />
+
+              <span className="input-help">
+                Enter the hospital area or city.
+              </span>
+
+            </div>
+
+            <div className="form-group">
+
+              <label className="section-label">
+                CONTACT NUMBER
+              </label>
+
+              <input
+                type="tel"
+                name="contact"
+                placeholder="Enter contact number"
+                value={formData.contact}
+                onChange={handleChange}
+              />
+
+            </div>
 
           </section>
 
-
-          {/* ==================================
-              POST REQUEST BUTTON
-          ================================== */}
+          {/* ================= SUBMIT ================= */}
 
           <button
             type="submit"
-            className="post-request-btn"
+            className="post-request-button"
           >
-
-            <span className="post-icon"></span>
-
-            Post Request
-
+            <span>📢</span>
+            Post Blood Request
           </button>
 
-
-          {/* ==================================
-              INFORMATION
-          ================================== */}
-
-          <p className="request-info">
-
-            <span className="info-icon">
-              ⓘ
-            </span>
-
-            Your request will be visible to donors
-            within a 10-mile radius.
-
+          <p className="request-note">
+            ⓘ Your request will be matched with compatible
+            donors nearby.
           </p>
-
 
         </form>
 
       </main>
 
     </div>
-
   );
-
 }
 
 export default BloodRequest;

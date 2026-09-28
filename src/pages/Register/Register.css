@@ -41,7 +41,7 @@
 
 
 /* =========================================
-   LEFT
+   LEFT SIDE
 ========================================= */
 
 .register-left {
@@ -89,7 +89,7 @@
 
 
 /* =========================================
-   INFO
+   INFORMATION
 ========================================= */
 
 .register-info {
@@ -120,7 +120,7 @@
 
 
 /* =========================================
-   RIGHT
+   RIGHT SIDE
 ========================================= */
 
 .register-right {
@@ -175,7 +175,13 @@
   margin-bottom: 8px;
 }
 
-.form-group input {
+
+/* =========================================
+   INPUTS
+========================================= */
+
+.form-group input,
+.form-group select {
   width: 100%;
 
   height: 48px;
@@ -186,20 +192,52 @@
 
   border-radius: 9px;
 
+  background: #ffffff;
+
+  color: #333333;
+
   font-size: 14px;
 
   outline: none;
 
   box-sizing: border-box;
 
-  transition: 0.2s;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
-.form-group input:focus {
+
+/* =========================================
+   INPUT FOCUS
+========================================= */
+
+.form-group input:focus,
+.form-group select:focus {
   border-color: #dc2626;
 
   box-shadow:
     0 0 0 3px rgba(220, 38, 38, 0.08);
+}
+
+
+/* =========================================
+   PLACEHOLDER
+========================================= */
+
+.form-group input::placeholder {
+  color: #999999;
+}
+
+
+/* =========================================
+   SELECT
+========================================= */
+
+.form-group select {
+  cursor: pointer;
+
+  appearance: auto;
 }
 
 
@@ -228,13 +266,19 @@
 
   margin-top: 8px;
 
-  transition: 0.2s;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
 }
 
 .register-btn:hover {
   background: #b91c1c;
 
   transform: translateY(-1px);
+}
+
+.register-btn:active {
+  transform: translateY(0);
 }
 
 

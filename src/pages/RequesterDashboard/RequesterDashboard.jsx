@@ -1,67 +1,117 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+
 import "./RequesterDashboard.css";
 
 function RequesterDashboard() {
 
   const navigate = useNavigate();
 
-  const userEmail = localStorage.getItem("userEmail");
 
-  // =========================================
-  // BLOOD REQUEST STATE
-  // =========================================
+  /* =========================================================
+     USER
+  ========================================================= */
 
-  const [bloodRequest, setBloodRequest] = useState(null);
+  const [userName, setUserName] = useState(
+    localStorage.getItem("userName") || "Requester"
+  );
+
+  const [userEmail, setUserEmail] = useState(
+    localStorage.getItem("userEmail") || "user@gmail.com"
+  );
 
 
-  // =========================================
-  // LOAD BLOOD REQUEST
-  // =========================================
+  /* =========================================================
+     BLOOD REQUEST
+  ========================================================= */
+
+  const [bloodRequest, setBloodRequest] = useState(() => {
+
+    const saved =
+      localStorage.getItem("bloodRequest");
+
+    if (!saved) {
+      return null;
+    }
+
+    try {
+      return JSON.parse(saved);
+    } catch {
+      return null;
+    }
+
+  });
+
+
+  /* =========================================================
+     LOAD DASHBOARD DATA
+  ========================================================= */
+
+  const loadDashboard = () => {
+
+    setUserName(
+      localStorage.getItem("userName") ||
+      "Requester"
+    );
+
+    setUserEmail(
+      localStorage.getItem("userEmail") ||
+      "user@gmail.com"
+    );
+
+
+    const saved =
+      localStorage.getItem("bloodRequest");
+
+    if (!saved) {
+      setBloodRequest(null);
+      return;
+    }
+
+
+    try {
+
+      setBloodRequest(
+        JSON.parse(saved)
+      );
+
+    } catch {
+
+      setBloodRequest(null);
+
+    }
+
+  };
+
+
+  /* =========================================================
+     DASHBOARD UPDATE LISTENER
+  ========================================================= */
 
   useEffect(() => {
 
-    const loadBloodRequest = () => {
-
-      const savedRequest =
-        localStorage.getItem("bloodRequest");
-
-      if (savedRequest) {
-
-        try {
-
-          const request = JSON.parse(savedRequest);
-
-          setBloodRequest(request);
-
-        } catch (error) {
-
-          console.error(
-            "Error reading blood request:",
-            error
-          );
-
-          setBloodRequest(null);
-
-        }
-
-      } else {
-
-        setBloodRequest(null);
-
-      }
-
-    };
-
-
-    // Load request when dashboard opens
-    loadBloodRequest();
-
-
-    // Check when localStorage changes
     window.addEventListener(
       "storage",
-      loadBloodRequest
+      loadDashboard
+    );
+
+    window.addEventListener(
+      "bloodRequestUpdated",
+      loadDashboard
+    );
+
+
+    /*
+      Reload when dashboard becomes active again.
+    */
+
+    const handleFocus = () => {
+      loadDashboard();
+    };
+
+    window.addEventListener(
+      "focus",
+      handleFocus
     );
 
 
@@ -69,7 +119,17 @@ function RequesterDashboard() {
 
       window.removeEventListener(
         "storage",
-        loadBloodRequest
+        loadDashboard
+      );
+
+      window.removeEventListener(
+        "bloodRequestUpdated",
+        loadDashboard
+      );
+
+      window.removeEventListener(
+        "focus",
+        handleFocus
       );
 
     };
@@ -77,23 +137,9 @@ function RequesterDashboard() {
   }, []);
 
 
-  // =========================================
-  // LOGOUT
-  // =========================================
-
-  const handleLogout = () => {
-
-    localStorage.removeItem("isLoggedIn");
-    localStorage.removeItem("userEmail");
-
-    navigate("/login");
-
-  };
-
-
-  // =========================================
-  // CREATE BLOOD REQUEST
-  // =========================================
+  /* =========================================================
+     CREATE REQUEST
+  ========================================================= */
 
   const handleCreateRequest = () => {
 
@@ -102,38 +148,195 @@ function RequesterDashboard() {
   };
 
 
-  // =========================================
-  // REQUEST COUNT
-  // =========================================
+  /* =========================================================
+     OPEN MATCHING
+  ========================================================= */
 
-  const activeRequests = bloodRequest ? 1 : 0;
+  const handleFindDonors = () => {
 
-  const pendingRequests =
-    bloodRequest &&
-    bloodRequest.status === "Pending"
-      ? 1
-      : 0;
+    if (!bloodRequest) {
 
+      navigate("/blood-request");
+
+      return;
+    }
+
+
+    navigate(
+      "/donor-status",
+      {
+        state: {
+          ...bloodRequest,
+          stage: "matching",
+        },
+      }
+    );
+
+  };
+
+
+  /* =========================================================
+     LOGOUT
+  ========================================================= */
+
+  const handleLogout = () => {
+
+    localStorage.removeItem("userName");
+    localStorage.removeItem("userEmail");
+
+    navigate("/login");
+
+  };
+
+
+  /* =========================================================
+     REQUEST VALUES
+  ========================================================= */
+
+  const requestBloodGroup =
+    bloodRequest?.bloodGroup || "O+";
+
+  const requestHospital =
+    bloodRequest?.hospital ||
+    "City General Hospital";
+
+  const requestLocation =
+    bloodRequest?.location ||
+    "Kolkata";
+
+  const requestUrgency =
+    bloodRequest?.urgency ||
+    "Urgent";
+
+
+  /* =========================================================
+     MATCHING STATUS
+  ========================================================= */
+
+  const isMatched =
+    bloodRequest?.status === "MATCHED" ||
+    bloodRequest?.matched === true;
+
+  const donorsFound =
+    bloodRequest?.donorsFound ||
+    0;
+
+  const donorResponses =
+    bloodRequest?.donorResponses ||
+    0;
+
+  const pendingDonors =
+    bloodRequest?.pendingDonors ||
+    0;
+
+
+  /* =========================================================
+     DONORS
+  ========================================================= */
+
+  const donors = bloodRequest?.donors || [];
+
+
+  /* =========================================================
+     ACCEPTED DONOR
+  ========================================================= */
+
+  const acceptedDonor =
+    donors.find(
+      (donor) =>
+        donor.status === "ACCEPTED"
+    ) || null;
+
+
+  /* =========================================================
+     NOTIFICATIONS
+  ========================================================= */
+
+  const notifications = [
+
+    {
+      title:
+        isMatched
+          ? "Donors matched"
+          : "Finding donors",
+
+      message:
+        isMatched
+          ? `${donorsFound} compatible donors were found near ${requestLocation}.`
+          : `${requestBloodGroup} blood request is currently being matched.`,
+
+      time:
+        isMatched
+          ? "Just now"
+          : "Recently",
+
+      type:
+        isMatched
+          ? "success"
+          : "info",
+    },
+
+
+    ...(acceptedDonor
+      ? [
+          {
+            title:
+              "Donor accepted",
+
+            message:
+              `${acceptedDonor.name} accepted your blood request.`,
+
+            time:
+              "Just now",
+
+            type:
+              "success",
+          },
+        ]
+      : []),
+
+
+    {
+      title:
+        "Request location",
+
+      message:
+        `${requestHospital} • ${requestLocation}`,
+
+      time:
+        "Today",
+
+      type:
+        "warning",
+    },
+
+  ];
+
+
+  /* =========================================================
+     RENDER
+  ========================================================= */
 
   return (
 
     <div className="requester-dashboard">
 
 
-      {/* ================= NAVBAR ================= */}
+      {/* =====================================================
+          HEADER
+      ===================================================== */}
 
-      <header className="requester-navbar">
+      <header className="requester-header">
 
-        <div className="requester-logo">
+        <Link
+          to="/"
+          className="dashboard-brand"
+        >
+          LifeLink
+        </Link>
 
-          <Link to="/">
-            Life<span>Link</span>
-          </Link>
 
-        </div>
-
-
-        <nav className="requester-nav">
+        <nav className="dashboard-navigation">
 
           <Link
             to="/requester-dashboard"
@@ -142,47 +345,54 @@ function RequesterDashboard() {
             Dashboard
           </Link>
 
-          <a href="#requests">
+
+          <button
+            type="button"
+            onClick={handleFindDonors}
+          >
             My Requests
-          </a>
+          </button>
 
-          <a href="#donors">
+
+          <button
+            type="button"
+            onClick={handleFindDonors}
+          >
             Find Donors
-          </a>
+          </button>
 
-          <a href="#notifications">
+
+          <button
+            type="button"
+            onClick={handleFindDonors}
+          >
             Notifications
-          </a>
+          </button>
 
         </nav>
 
 
-        <div className="requester-user">
+        <div className="dashboard-account">
 
-          <div className="user-avatar">
-
-            {userEmail
-              ? userEmail.charAt(0).toUpperCase()
-              : "U"}
-
+          <div className="account-avatar">
+            {userName
+              .charAt(0)
+              .toUpperCase()}
           </div>
 
 
-          <div className="user-details">
+          <div className="account-details">
 
             <strong>
-              {userEmail || "User"}
+              {userEmail}
             </strong>
-
-            <span>
-              Requester
-            </span>
 
           </div>
 
 
           <button
-            className="logout-btn"
+            className="logout-button"
+            type="button"
             onClick={handleLogout}
           >
             Logout
@@ -193,70 +403,114 @@ function RequesterDashboard() {
       </header>
 
 
-      {/* ================= MAIN CONTENT ================= */}
+      {/* =====================================================
+          CONTENT
+      ===================================================== */}
 
-      <main className="requester-main">
+      <main className="dashboard-content">
 
 
-        {/* ================= WELCOME ================= */}
+        {/* ===================================================
+            WELCOME
+        =================================================== */}
 
-        <section className="dashboard-welcome">
+        <section className="welcome-section">
 
           <div>
 
-            <p className="welcome-small">
+            <span className="dashboard-label">
               REQUESTER DASHBOARD
-            </p>
+            </span>
+
 
             <h1>
-              Welcome back!
+              Welcome back,{" "}
+              {userName.split(" ")[0]}!
             </h1>
 
-            <p className="welcome-description">
-              Manage your blood requests, find available donors,
-              and track your request status.
+
+            <p>
+              Manage your blood requests,
+              find available donors, and
+              track your matching status.
             </p>
 
           </div>
 
 
           <button
-            className="create-request-btn"
+            className="create-request-button"
             onClick={handleCreateRequest}
           >
-
-            <span>
-              +
-            </span>
-
+            <span>+</span>
             Create Blood Request
-
           </button>
 
         </section>
 
 
-        {/* ================= STATISTICS ================= */}
+        {/* ===================================================
+            MATCHED SUCCESS BANNER
+        =================================================== */}
 
-        <section className="dashboard-stats">
+        {isMatched && (
+          <section className="matched-banner">
+
+            <div className="matched-banner-icon">
+              ✓
+            </div>
 
 
-          {/* ACTIVE REQUESTS */}
+            <div className="matched-banner-content">
+
+              <span>
+                DONOR MATCHING COMPLETE
+              </span>
+
+              <h2>
+                Nearby donors found for {requestBloodGroup}
+              </h2>
+
+              <p>
+                {donorsFound} compatible donors
+                are available near {requestLocation}.
+              </p>
+
+            </div>
+
+
+            <button
+              type="button"
+              onClick={handleFindDonors}
+            >
+              View Matches →
+            </button>
+
+          </section>
+        )}
+
+
+        {/* ===================================================
+            STATISTICS
+        =================================================== */}
+
+        <section className="stats-grid">
+
 
           <div className="stat-card">
 
             <div className="stat-icon">
-              🩸
+              ♥
             </div>
 
-            <div className="stat-content">
+            <div>
 
               <span>
                 Active Requests
               </span>
 
               <strong>
-                {String(activeRequests).padStart(2, "0")}
+                {bloodRequest ? "01" : "00"}
               </strong>
 
               <small>
@@ -268,26 +522,26 @@ function RequesterDashboard() {
           </div>
 
 
-          {/* COMPLETED */}
-
           <div className="stat-card">
 
             <div className="stat-icon">
               ✓
             </div>
 
-            <div className="stat-content">
+            <div>
 
               <span>
-                Completed
+                Donors Found
               </span>
 
               <strong>
-                05
+                {isMatched
+                  ? String(donorsFound).padStart(2, "0")
+                  : "00"}
               </strong>
 
               <small>
-                Requests fulfilled
+                Nearby matches
               </small>
 
             </div>
@@ -295,22 +549,22 @@ function RequesterDashboard() {
           </div>
 
 
-          {/* DONOR RESPONSES */}
-
           <div className="stat-card">
 
             <div className="stat-icon">
-              👥
+              ♟
             </div>
 
-            <div className="stat-content">
+            <div>
 
               <span>
                 Donor Responses
               </span>
 
               <strong>
-                08
+                {isMatched
+                  ? String(donorResponses).padStart(2, "0")
+                  : "00"}
               </strong>
 
               <small>
@@ -322,22 +576,22 @@ function RequesterDashboard() {
           </div>
 
 
-          {/* PENDING */}
-
           <div className="stat-card">
 
             <div className="stat-icon">
-              ⏱
+              ◷
             </div>
 
-            <div className="stat-content">
+            <div>
 
               <span>
                 Pending
               </span>
 
               <strong>
-                {String(pendingRequests).padStart(2, "0")}
+                {isMatched
+                  ? String(pendingDonors).padStart(2, "0")
+                  : "00"}
               </strong>
 
               <small>
@@ -351,17 +605,18 @@ function RequesterDashboard() {
         </section>
 
 
-        {/* ================= CONTENT GRID ================= */}
+        {/* ===================================================
+            TOP GRID
+        =================================================== */}
 
         <section className="dashboard-grid">
 
 
-          {/* ================= RECENT REQUESTS ================= */}
+          {/* =================================================
+              RECENT REQUESTS
+          ================================================= */}
 
-          <div
-            className="dashboard-card requests-card"
-            id="requests"
-          >
+          <div className="dashboard-card requests-card">
 
             <div className="card-header">
 
@@ -378,171 +633,160 @@ function RequesterDashboard() {
               </div>
 
 
-              <button className="view-all-btn">
+              <button
+                type="button"
+                onClick={handleFindDonors}
+              >
                 View All
               </button>
 
             </div>
 
 
-            <div className="request-list">
+            {bloodRequest ? (
 
+              <div className="request-list">
 
-              {/* ==================================
-                  NEWLY CREATED REQUEST
-              ================================== */}
+                <article
+                  className="request-row"
+                  onClick={handleFindDonors}
+                >
 
-              {bloodRequest && (
-
-                <div className="request-item">
-
-                  <div className="blood-type">
-                    {bloodRequest.bloodGroup}
+                  <div className="blood-type-circle">
+                    {requestBloodGroup}
                   </div>
 
 
-                  <div className="request-info">
+                  <div className="request-details">
 
                     <h3>
-                      {bloodRequest.bloodGroup}
-                      {" "}Blood Required
+                      {requestBloodGroup}
+                      {" "}
+                      Blood Required
                     </h3>
 
                     <p>
-                      {bloodRequest.hospital}
+                      {requestHospital}
+                      {" • "}
+                      {requestLocation}
                     </p>
 
-                    <span>
-                      {bloodRequest.units} Pints •
-                      {" "}
-                      {bloodRequest.urgency}
-                    </span>
+                    <small>
+                      Requested today
+                    </small>
 
                   </div>
 
 
-                  <div
-                    className={`request-status ${
-                      bloodRequest.urgency === "Critical"
-                        ? "urgent"
-                        : "pending"
-                    }`}
+                  <span
+                    className={
+                      isMatched
+                        ? "request-status matched"
+                        : "request-status"
+                    }
                   >
-                    {bloodRequest.status}
+                    {isMatched
+                      ? "Matched"
+                      : requestUrgency}
+                  </span>
+
+                </article>
+
+
+                <article className="request-row">
+
+                  <div className="blood-type-circle">
+                    O-
                   </div>
 
-                </div>
+                  <div className="request-details">
 
-              )}
+                    <h3>
+                      O- Blood Required
+                    </h3>
 
+                    <p>
+                      Apollo Hospital • Kolkata
+                    </p>
 
-              {/* ==================================
-                  OLD SAMPLE REQUEST
-              ================================== */}
+                    <small>
+                      Requested yesterday
+                    </small>
 
-              <div className="request-item">
+                  </div>
 
-                <div className="blood-type">
-                  A+
-                </div>
-
-                <div className="request-info">
-
-                  <h3>
-                    A+ Blood Required
-                  </h3>
-
-                  <p>
-                    City Hospital • Kolkata
-                  </p>
-
-                  <span>
-                    Requested 2 hours ago
+                  <span className="request-status pending">
+                    Pending
                   </span>
 
-                </div>
+                </article>
 
-                <div className="request-status urgent">
-                  Urgent
-                </div>
+
+                <article className="request-row">
+
+                  <div className="blood-type-circle">
+                    B+
+                  </div>
+
+                  <div className="request-details">
+
+                    <h3>
+                      B+ Blood Required
+                    </h3>
+
+                    <p>
+                      AMRI Hospital • Kolkata
+                    </p>
+
+                    <small>
+                      Requested 3 days ago
+                    </small>
+
+                  </div>
+
+                  <span className="request-status completed">
+                    Completed
+                  </span>
+
+                </article>
 
               </div>
 
+            ) : (
 
-              {/* ==================================
-                  OLD SAMPLE REQUEST
-              ================================== */}
+              <div className="no-request">
 
-              <div className="request-item">
-
-                <div className="blood-type">
-                  O-
+                <div>
+                  ♥
                 </div>
 
-                <div className="request-info">
+                <h3>
+                  No active blood request
+                </h3>
 
-                  <h3>
-                    O- Blood Required
-                  </h3>
+                <p>
+                  Create a request to start
+                  finding nearby donors.
+                </p>
 
-                  <p>
-                    Apollo Hospital • Kolkata
-                  </p>
-
-                  <span>
-                    Requested yesterday
-                  </span>
-
-                </div>
-
-                <div className="request-status pending">
-                  Pending
-                </div>
+                <button
+                  onClick={handleCreateRequest}
+                >
+                  Create Request
+                </button>
 
               </div>
 
-
-              {/* ==================================
-                  OLD SAMPLE REQUEST
-              ================================== */}
-
-              <div className="request-item">
-
-                <div className="blood-type">
-                  B+
-                </div>
-
-                <div className="request-info">
-
-                  <h3>
-                    B+ Blood Required
-                  </h3>
-
-                  <p>
-                    AMRI Hospital • Kolkata
-                  </p>
-
-                  <span>
-                    Requested 3 days ago
-                  </span>
-
-                </div>
-
-                <div className="request-status completed">
-                  Completed
-                </div>
-
-              </div>
-
-
-            </div>
+            )}
 
           </div>
 
 
-          {/* ================= QUICK ACTIONS ================= */}
+          {/* =================================================
+              QUICK ACTIONS
+          ================================================= */}
 
-          <div className="dashboard-card quick-actions">
+          <div className="dashboard-card quick-actions-card">
 
             <div className="card-header">
 
@@ -561,18 +805,15 @@ function RequesterDashboard() {
             </div>
 
 
-            <div className="action-list">
-
-
-              {/* REQUEST BLOOD */}
+            <div className="quick-actions">
 
               <button
-                className="action-item"
+                className="quick-action"
                 onClick={handleCreateRequest}
               >
 
-                <div className="action-icon">
-                  🩸
+                <div className="quick-icon">
+                  ♥
                 </div>
 
                 <div>
@@ -594,12 +835,13 @@ function RequesterDashboard() {
               </button>
 
 
-              {/* FIND DONORS */}
+              <button
+                className="quick-action"
+                onClick={handleFindDonors}
+              >
 
-              <button className="action-item">
-
-                <div className="action-icon">
-                  👥
+                <div className="quick-icon">
+                  ◎
                 </div>
 
                 <div>
@@ -609,7 +851,7 @@ function RequesterDashboard() {
                   </strong>
 
                   <span>
-                    Search nearby donors
+                    View nearby compatible donors
                   </span>
 
                 </div>
@@ -621,12 +863,40 @@ function RequesterDashboard() {
               </button>
 
 
-              {/* REQUEST HISTORY */}
+              <button
+                className="quick-action"
+                onClick={handleFindDonors}
+              >
 
-              <button className="action-item">
+                <div className="quick-icon">
+                  ◉
+                </div>
 
-                <div className="action-icon">
-                  📋
+                <div>
+
+                  <strong>
+                    Track Matching
+                  </strong>
+
+                  <span>
+                    See donor matching on the map
+                  </span>
+
+                </div>
+
+                <b>
+                  →
+                </b>
+
+              </button>
+
+
+              <button
+                className="quick-action"
+              >
+
+                <div className="quick-icon">
+                  ▣
                 </div>
 
                 <div>
@@ -654,159 +924,157 @@ function RequesterDashboard() {
         </section>
 
 
-        {/* ================= BOTTOM SECTION ================= */}
+        {/* ===================================================
+            BOTTOM GRID
+        =================================================== */}
 
-        <section className="dashboard-bottom">
+        <section className="dashboard-grid bottom-grid">
 
 
-          {/* ================= DONOR RESPONSES ================= */}
+          {/* =================================================
+              DONOR RESPONSES
+          ================================================= */}
 
-          <div
-            className="dashboard-card donor-responses"
-            id="donors"
-          >
+          <div className="dashboard-card donor-responses-card">
 
             <div className="card-header">
 
               <div>
 
                 <h2>
-                  Recent Donor Responses
+                  Nearby Donor Matches
                 </h2>
 
                 <p>
-                  Donors who responded to your requests
+                  Donors responding to your request
                 </p>
 
               </div>
 
-              <button className="view-all-btn">
+
+              <button
+                type="button"
+                onClick={handleFindDonors}
+              >
                 View All
               </button>
 
             </div>
 
 
-            <div className="donor-table">
+            {isMatched ? (
 
-              <div className="table-header">
+              <div className="donor-table">
 
-                <span>
-                  DONOR
-                </span>
+                <div className="table-header">
 
-                <span>
-                  BLOOD TYPE
-                </span>
+                  <span>
+                    DONOR
+                  </span>
 
-                <span>
-                  LOCATION
-                </span>
+                  <span>
+                    BLOOD TYPE
+                  </span>
 
-                <span>
-                  STATUS
-                </span>
+                  <span>
+                    LOCATION
+                  </span>
 
-              </div>
-
-
-              <div className="table-row">
-
-                <div className="donor-name">
-
-                  <div className="donor-avatar">
-                    R
-                  </div>
-
-                  <strong>
-                    Rahul Sharma
-                  </strong>
+                  <span>
+                    STATUS
+                  </span>
 
                 </div>
 
-                <span>
-                  A+
-                </span>
 
-                <span>
-                  Salt Lake
-                </span>
+                {donors.map((donor) => (
 
-                <span className="available">
-                  Available
-                </span>
+                  <div
+                    className="donor-table-row"
+                    key={donor.id}
+                    onClick={handleFindDonors}
+                  >
 
-              </div>
+                    <div className="donor-name">
+
+                      <div className="small-avatar">
+                        {donor.initials}
+                      </div>
+
+                      <strong>
+                        {donor.name}
+                      </strong>
+
+                    </div>
 
 
-              <div className="table-row">
+                    <span>
+                      {requestBloodGroup}
+                    </span>
 
-                <div className="donor-name">
 
-                  <div className="donor-avatar">
-                    P
+                    <span>
+                      {donor.location}
+                    </span>
+
+
+                    <span>
+
+                      <b
+                        className={
+                          donor.status === "ACCEPTED"
+                            ? "available-status"
+                            : "responded-status"
+                        }
+                      >
+                        {donor.status === "ACCEPTED"
+                          ? "Accepted"
+                          : "Notified"}
+                      </b>
+
+                    </span>
+
                   </div>
 
-                  <strong>
-                    Priya Das
-                  </strong>
-
-                </div>
-
-                <span>
-                  O-
-                </span>
-
-                <span>
-                  New Town
-                </span>
-
-                <span className="available">
-                  Available
-                </span>
+                ))}
 
               </div>
 
+            ) : (
 
-              <div className="table-row">
+              <div className="no-request">
 
-                <div className="donor-name">
-
-                  <div className="donor-avatar">
-                    A
-                  </div>
-
-                  <strong>
-                    Amit Roy
-                  </strong>
-
+                <div>
+                  ◎
                 </div>
 
-                <span>
-                  B+
-                </span>
+                <h3>
+                  Finding nearby donors
+                </h3>
 
-                <span>
-                  Park Street
-                </span>
+                <p>
+                  Donor matching is currently
+                  in progress.
+                </p>
 
-                <span className="responded">
-                  Responded
-                </span>
+                <button
+                  onClick={handleFindDonors}
+                >
+                  View Matching
+                </button>
 
               </div>
 
-            </div>
+            )}
 
           </div>
 
 
-          {/* ================= NOTIFICATIONS ================= */}
+          {/* =================================================
+              NOTIFICATIONS
+          ================================================= */}
 
-          <div
-            className="dashboard-card notifications-card"
-            id="notifications"
-          >
+          <div className="dashboard-card notifications-card">
 
             <div className="card-header">
 
@@ -825,75 +1093,47 @@ function RequesterDashboard() {
             </div>
 
 
-            <div className="notification-list">
+            <div className="notifications-list">
 
-              <div className="notification-item">
+              {notifications.map(
+                (notification, index) => (
 
-                <div className="notification-dot"></div>
+                  <article
+                    className="notification-item"
+                    key={index}
+                  >
 
-                <div>
-
-                  <strong>
-                    Donor responded
-                  </strong>
-
-                  <p>
-                    Rahul Sharma responded to your A+ blood request.
-                  </p>
-
-                  <small>
-                    20 minutes ago
-                  </small>
-
-                </div>
-
-              </div>
+                    <div
+                      className={
+                        `notification-dot ${
+                          notification.type
+                        }`
+                      }
+                    >
+                      ●
+                    </div>
 
 
-              <div className="notification-item">
+                    <div>
 
-                <div className="notification-dot"></div>
+                      <strong>
+                        {notification.title}
+                      </strong>
 
-                <div>
+                      <p>
+                        {notification.message}
+                      </p>
 
-                  <strong>
-                    Request updated
-                  </strong>
+                      <small>
+                        {notification.time}
+                      </small>
 
-                  <p>
-                    Your O- blood request is still pending.
-                  </p>
+                    </div>
 
-                  <small>
-                    Yesterday
-                  </small>
+                  </article>
 
-                </div>
-
-              </div>
-
-
-              <div className="notification-item">
-
-                <div className="notification-dot"></div>
-
-                <div>
-
-                  <strong>
-                    Request completed
-                  </strong>
-
-                  <p>
-                    Your B+ blood request was fulfilled.
-                  </p>
-
-                  <small>
-                    3 days ago
-                  </small>
-
-                </div>
-
-              </div>
+                )
+              )}
 
             </div>
 
@@ -901,12 +1141,12 @@ function RequesterDashboard() {
 
         </section>
 
+
       </main>
 
     </div>
 
   );
-
 }
 
 export default RequesterDashboard;
