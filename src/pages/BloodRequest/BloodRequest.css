@@ -1,0 +1,732 @@
+/* =====================================================
+   BLOOD REQUEST PAGE
+===================================================== */
+
+.blood-request-page {
+  min-height: 100vh;
+
+  background: #f4f9fd;
+
+  color: #172a33;
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.request-header {
+  width: 100%;
+  height: 58px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 18px;
+
+  padding: 0 32px;
+
+  background: #f7fbff;
+
+  border-bottom: 1px solid #e5b8b5;
+
+  box-sizing: border-box;
+}
+
+
+/* HEADER TITLE */
+
+.request-header h2 {
+  margin: 0;
+
+  font-size: 21px;
+
+  font-weight: 600;
+
+  color: #182b35;
+}
+
+
+/* BACK BUTTON */
+
+.back-btn {
+  width: 30px;
+  height: 36px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  border: none;
+
+  background: transparent;
+
+  color: #182b35;
+
+  font-size: 31px;
+
+  line-height: 1;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.back-btn:hover {
+  transform: translateX(-3px);
+}
+
+
+/* =====================================================
+   MAIN CONTAINER
+===================================================== */
+
+.request-container {
+  width: 746px;
+
+  margin: 38px auto 35px;
+}
+
+
+/* =====================================================
+   TITLE
+===================================================== */
+
+.request-title {
+  margin-bottom: 25px;
+}
+
+.request-title h1 {
+  margin: 0 0 10px;
+
+  font-size: 30px;
+
+  line-height: 1.2;
+
+  font-weight: 700;
+
+  color: #152a34;
+}
+
+.request-title p {
+  margin: 0;
+
+  font-size: 16px;
+
+  line-height: 1.5;
+
+  color: #715b5b;
+}
+
+
+/* =====================================================
+   COMMON CARD
+===================================================== */
+
+.request-card {
+  background: #ffffff;
+
+  border: 1px solid #d5e5ee;
+
+  border-radius: 12px;
+
+  box-shadow:
+    0 1px 4px rgba(0, 0, 0, 0.04);
+
+  box-sizing: border-box;
+}
+
+
+/* =====================================================
+   SECTION LABEL
+===================================================== */
+
+.section-label {
+  display: block;
+
+  margin: 0 0 12px;
+
+  font-size: 13px;
+
+  line-height: 1.2;
+
+  font-weight: 700;
+
+  letter-spacing: 0.3px;
+
+  color: #69504d;
+}
+
+
+/* =====================================================
+   BLOOD GROUP
+===================================================== */
+
+.blood-group-card {
+  width: 100%;
+
+  padding: 17px;
+
+  margin-bottom: 24px;
+}
+
+
+/* BLOOD GROUP GRID */
+
+.blood-group-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, 1fr);
+
+  gap: 9px;
+}
+
+
+/* BLOOD GROUP BUTTON */
+
+.blood-group-btn {
+  width: 100%;
+  height: 52px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 2px solid #e8bdb8;
+
+  border-radius: 8px;
+
+  background: #ffffff;
+
+  color: #1d3038;
+
+  font-size: 16px;
+
+  font-weight: 400;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+
+/* HOVER */
+
+.blood-group-btn:hover {
+  border-color: #c9151b;
+
+  background: #fffafa;
+}
+
+
+/* SELECTED */
+
+.blood-group-btn.selected {
+  border-color: #c9151b;
+
+  background: #fff8f8;
+
+  color: #c9151b;
+}
+
+
+/* =====================================================
+   URGENCY + UNITS
+===================================================== */
+
+.request-row {
+  display: grid;
+
+  grid-template-columns:
+    1fr 1fr;
+
+  gap: 24px;
+
+  margin-bottom: 24px;
+}
+
+
+/* =====================================================
+   URGENCY CARD
+===================================================== */
+
+.urgency-card {
+  min-height: 239px;
+
+  padding: 17px;
+}
+
+
+/* URGENCY OPTIONS */
+
+.urgency-options {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 12px;
+}
+
+
+/* URGENCY BUTTON */
+
+.urgency-option {
+  width: 100%;
+  height: 51px;
+
+  display: flex;
+  align-items: center;
+
+  padding: 0 13px;
+
+  gap: 13px;
+
+  border: 1px solid #e8c2be;
+
+  border-radius: 9px;
+
+  background: #ffffff;
+
+  color: #26353c;
+
+  font-size: 16px;
+
+  cursor: pointer;
+
+  text-align: left;
+
+  transition: 0.2s;
+}
+
+.urgency-option:hover {
+  background: #fffafa;
+
+  border-color: #dca9a4;
+}
+
+
+/* URGENCY TEXT */
+
+.urgency-text {
+  flex: 1;
+}
+
+
+/* =====================================================
+   RADIO
+===================================================== */
+
+.radio-circle {
+  width: 20px;
+  height: 20px;
+
+  flex-shrink: 0;
+
+  border: 1.5px solid #e5bdb9;
+
+  border-radius: 50%;
+
+  background: #ffffff;
+}
+
+
+/* SELECTED RADIO */
+
+.radio-circle.checked {
+  border: 6px solid #c9151b;
+}
+
+
+/* =====================================================
+   URGENCY DOTS
+===================================================== */
+
+.critical-dot,
+.high-dot,
+.normal-dot {
+  width: 12px;
+  height: 12px;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+}
+
+
+/* CRITICAL */
+
+.critical-dot {
+  background: #c9151b;
+}
+
+
+/* HIGH */
+
+.high-dot {
+  background: #ff7a16;
+}
+
+
+/* NORMAL */
+
+.normal-dot {
+  background: #0869a9;
+}
+
+
+/* =====================================================
+   UNITS CARD
+===================================================== */
+
+.units-card {
+  min-height: 239px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  padding: 20px;
+}
+
+
+/* UNITS LABEL */
+
+.units-label {
+  margin-bottom: 27px;
+
+  text-align: center;
+}
+
+
+/* =====================================================
+   UNITS CONTROL
+===================================================== */
+
+.units-control {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 36px;
+}
+
+
+/* PLUS / MINUS */
+
+.unit-btn {
+  width: 50px;
+  height: 50px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  border: 1px solid #e5bbb7;
+
+  border-radius: 50%;
+
+  background: #ffffff;
+
+  color: #664f4c;
+
+  font-size: 28px;
+
+  font-weight: 400;
+
+  line-height: 1;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.unit-btn:hover {
+  background: #fff7f7;
+
+  border-color: #c9151b;
+
+  color: #c9151b;
+}
+
+
+/* NUMBER */
+
+.unit-number {
+  min-width: 35px;
+
+  text-align: center;
+
+  font-size: 40px;
+
+  line-height: 1;
+
+  font-weight: 700;
+
+  color: #142832;
+}
+
+
+/* =====================================================
+   HOSPITAL CARD
+===================================================== */
+
+.hospital-card {
+  width: 100%;
+
+  padding: 17px;
+
+  margin-bottom: 30px;
+}
+
+
+/* =====================================================
+   HOSPITAL INPUT
+===================================================== */
+
+.hospital-card input {
+  width: 100%;
+  height: 52px;
+
+  display: block;
+
+  padding: 0 16px;
+
+  border: 1px solid #e5bbb7;
+
+  border-radius: 8px;
+
+  outline: none;
+
+  background: #f9fcff;
+
+  color: #21333b;
+
+  font-size: 16px;
+
+  font-family: inherit;
+
+  box-sizing: border-box;
+
+  transition: 0.2s;
+}
+
+
+/* INPUT FOCUS */
+
+.hospital-card input:focus {
+  border-color: #c9151b;
+
+  box-shadow:
+    0 0 0 2px rgba(201, 21, 27, 0.08);
+}
+
+
+/* PLACEHOLDER */
+
+.hospital-card input::placeholder {
+  color: #344b57;
+
+  opacity: 1;
+}
+
+
+/* =====================================================
+   POST REQUEST BUTTON
+===================================================== */
+
+.post-request-btn {
+  width: 100%;
+  height: 62px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  padding: 0;
+
+  border: none;
+
+  border-radius: 32px;
+
+  background: #c9151b;
+
+  color: #ffffff;
+
+  font-size: 20px;
+
+  font-weight: 700;
+
+  font-family: inherit;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 4px 8px rgba(201, 21, 27, 0.18);
+
+  transition: 0.2s;
+}
+
+
+/* HOVER */
+
+.post-request-btn:hover {
+  background: #ad1116;
+
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 6px 12px rgba(201, 21, 27, 0.22);
+}
+
+
+/* ACTIVE */
+
+.post-request-btn:active {
+  transform: translateY(0);
+}
+
+
+/* ICON */
+
+.post-icon {
+  font-size: 18px;
+}
+
+
+/* =====================================================
+   INFORMATION
+===================================================== */
+
+.request-info {
+  margin: 13px 0 0;
+
+  text-align: center;
+
+  font-size: 14px;
+
+  line-height: 1.4;
+
+  color: #715b5b;
+}
+
+.info-icon {
+  margin-right: 5px;
+}
+
+
+/* =====================================================
+   DESKTOP
+===================================================== */
+
+@media (min-width: 1000px) {
+
+  .request-container {
+    width: 746px;
+
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+}
+
+
+/* =====================================================
+   TABLET
+===================================================== */
+
+@media (max-width: 850px) {
+
+  .request-container {
+    width: calc(100% - 40px);
+
+    margin-top: 30px;
+  }
+
+  .request-row {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 550px) {
+
+  .request-header {
+    height: 56px;
+
+    padding: 0 18px;
+  }
+
+  .request-header h2 {
+    font-size: 19px;
+  }
+
+  .request-container {
+    width: calc(100% - 24px);
+
+    margin-top: 25px;
+  }
+
+  .request-title h1 {
+    font-size: 26px;
+  }
+
+  .request-title p {
+    font-size: 14px;
+  }
+
+  .blood-group-grid {
+    grid-template-columns:
+      repeat(2, 1fr);
+  }
+
+  .blood-group-btn {
+    height: 48px;
+  }
+
+  .request-row {
+    grid-template-columns: 1fr;
+
+    gap: 20px;
+  }
+
+  .units-card,
+  .urgency-card {
+    min-height: auto;
+  }
+
+  .hospital-card {
+    margin-bottom: 25px;
+  }
+
+  .post-request-btn {
+    height: 56px;
+
+    font-size: 18px;
+  }
+
+}

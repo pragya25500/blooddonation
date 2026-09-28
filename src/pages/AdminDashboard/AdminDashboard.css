@@ -1,0 +1,840 @@
+/* =========================================
+   ADMIN DASHBOARD
+========================================= */
+
+* {
+  box-sizing: border-box;
+}
+
+.admin-dashboard {
+  min-height: 100vh;
+  display: flex;
+  background: #f4faff;
+  color: #111827;
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+}
+
+
+/* =========================================
+   SIDEBAR
+========================================= */
+
+.admin-sidebar {
+  width: 275px;
+  min-height: 100vh;
+  background: #ffffff;
+  border-right: 1px solid #e8baba;
+  flex-shrink: 0;
+}
+
+.admin-logo {
+  height: 77px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 25px;
+  border-bottom: 1px solid #edf0f3;
+
+  font-size: 31px;
+  font-weight: 700;
+  color: #c91d20;
+}
+
+.admin-logo > span:last-child > span {
+  color: #b7191c;
+}
+
+.logo-icon {
+  font-size: 25px;
+  color: #c91d20;
+}
+
+.admin-navigation {
+  padding: 22px 13px;
+}
+
+.admin-nav-item {
+  height: 53px;
+  display: flex;
+  align-items: center;
+  gap: 17px;
+  padding: 0 20px;
+  margin-bottom: 8px;
+
+  color: #573d3b;
+  text-decoration: none;
+  border-radius: 9px;
+
+  font-size: 17px;
+  transition: 0.2s ease;
+}
+
+.admin-nav-item:hover {
+  background: #fff1f1;
+  color: #c91d20;
+}
+
+.admin-nav-item.active {
+  background: #fdeaea;
+  color: #c91d20;
+}
+
+.nav-icon {
+  width: 20px;
+  text-align: center;
+  font-size: 21px;
+  font-weight: 600;
+}
+
+
+/* =========================================
+   MAIN
+========================================= */
+
+.admin-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.admin-header {
+  height: 77px;
+  background: #f5fbff;
+  border-bottom: 1px solid #e5edf2;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 0 26px;
+}
+
+.notification-button {
+  position: relative;
+
+  border: 0;
+  background: transparent;
+
+  font-size: 24px;
+  color: #573d3b;
+
+  cursor: pointer;
+}
+
+.notification-badge {
+  position: absolute;
+  top: -4px;
+  right: -7px;
+
+  width: 16px;
+  height: 16px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+  background: #cf2020;
+  color: white;
+
+  font-size: 9px;
+  font-weight: 700;
+}
+
+
+/* =========================================
+   CONTENT
+========================================= */
+
+.admin-content {
+  padding: 29px 21px 60px;
+  max-width: 1150px;
+  margin: auto;
+}
+
+.admin-title {
+  margin-bottom: 28px;
+}
+
+.admin-title h1 {
+  margin: 0;
+  font-size: 31px;
+  line-height: 1.2;
+  color: #111820;
+}
+
+.admin-title p {
+  margin: 5px 0 0;
+  font-size: 17px;
+  color: #624746;
+}
+
+
+/* =========================================
+   STATISTICS
+========================================= */
+
+.admin-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 17px;
+  margin-bottom: 27px;
+}
+
+.admin-stat-card {
+  min-height: 96px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 16px 16px;
+
+  background: white;
+  border: 1px solid #f0dede;
+  border-radius: 13px;
+
+  box-shadow:
+    0 4px 12px rgba(30, 40, 50, 0.06);
+}
+
+.critical-card {
+  border-color: #ffb7b7;
+}
+
+.stat-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-text span {
+  font-size: 13px;
+  color: #503b3a;
+  margin-bottom: 6px;
+}
+
+.stat-text strong {
+  font-size: 39px;
+  line-height: 1;
+  color: #101820;
+}
+
+.critical-card .stat-text strong {
+  color: #d21d1d;
+}
+
+.stat-box {
+  width: 43px;
+  height: 43px;
+
+  border-radius: 9px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 24px;
+}
+
+.request-stat {
+  background: #ffd9d9;
+  color: #dd1d1d;
+}
+
+.donor-stat {
+  background: #dffffb;
+  color: #00877c;
+}
+
+.alert-stat {
+  background: #fdeaea;
+  color: #d31c1c;
+}
+
+.donation-stat {
+  background: #d9edff;
+  color: #0871ca;
+}
+
+
+/* =========================================
+   MAP
+========================================= */
+
+.map-card {
+  background: #ffffff;
+  border: 1px solid #dce9ef;
+  border-radius: 13px;
+
+  overflow: hidden;
+
+  box-shadow:
+    0 4px 12px rgba(30, 40, 50, 0.05);
+
+  margin-bottom: 27px;
+}
+
+.map-header {
+  height: 57px;
+
+  display: flex;
+  align-items: center;
+
+  padding: 0 17px;
+
+  border-bottom: 1px solid #dce9ef;
+}
+
+.map-header h2 {
+  margin: 0;
+
+  display: flex;
+  align-items: center;
+  gap: 11px;
+
+  font-size: 22px;
+}
+
+.map-header h2 span {
+  color: #d52121;
+}
+
+.map-container {
+  height: 369px;
+  position: relative;
+  overflow: hidden;
+}
+
+
+/* =========================================
+   FAKE MAP
+========================================= */
+
+.fake-map {
+  position: absolute;
+  inset: 0;
+  right: 185px;
+
+  background:
+    linear-gradient(
+      25deg,
+      transparent 45%,
+      rgba(255,255,255,.8) 46%,
+      transparent 48%
+    ),
+    linear-gradient(
+      145deg,
+      transparent 45%,
+      rgba(255,255,255,.7) 46%,
+      transparent 48%
+    ),
+    #dcecf1;
+}
+
+.water {
+  position: absolute;
+  background: #b7d9e5;
+  opacity: 0.85;
+}
+
+.water-one {
+  width: 115px;
+  height: 450px;
+  left: 41%;
+  top: -40px;
+  transform: rotate(17deg);
+}
+
+.water-two {
+  width: 65px;
+  height: 300px;
+  left: 15%;
+  top: 80px;
+  transform: rotate(-28deg);
+}
+
+.road {
+  position: absolute;
+  background: rgba(255, 255, 255, .8);
+  height: 5px;
+  border-radius: 10px;
+}
+
+.road-one {
+  width: 90%;
+  top: 47%;
+  left: -5%;
+  transform: rotate(-18deg);
+}
+
+.road-two {
+  width: 85%;
+  top: 68%;
+  left: 5%;
+  transform: rotate(11deg);
+}
+
+.road-three {
+  width: 90%;
+  top: 22%;
+  left: 5%;
+  transform: rotate(32deg);
+}
+
+.road-four {
+  width: 70%;
+  top: 80%;
+  left: 15%;
+  transform: rotate(-31deg);
+}
+
+
+/* =========================================
+   MAP LABELS
+========================================= */
+
+.map-label {
+  position: absolute;
+
+  color: #68777c;
+
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.label-one {
+  left: 20%;
+  top: 14%;
+}
+
+.label-two {
+  left: 37%;
+  top: 29%;
+}
+
+.label-three {
+  left: 67%;
+  top: 52%;
+}
+
+.label-four {
+  left: 25%;
+  top: 72%;
+}
+
+
+/* =========================================
+   MAP MARKERS
+========================================= */
+
+.map-marker {
+  position: absolute;
+
+  width: 21px;
+  height: 21px;
+
+  border-radius: 50%;
+
+  transform: translate(-50%, -50%);
+
+  filter: blur(1px);
+}
+
+.map-marker::after {
+  content: "";
+
+  position: absolute;
+  inset: -7px;
+
+  border-radius: 50%;
+  opacity: .25;
+}
+
+.critical-marker {
+  background: #f45d58;
+}
+
+.critical-marker::after {
+  background: #f45d58;
+}
+
+.donor-marker {
+  background: #38cfc4;
+}
+
+.donor-marker::after {
+  background: #38cfc4;
+}
+
+.marker-one {
+  left: 29%;
+  top: 24%;
+}
+
+.marker-two {
+  left: 53%;
+  top: 51%;
+}
+
+.marker-three {
+  left: 67%;
+  top: 28%;
+}
+
+.marker-four {
+  left: 69%;
+  top: 65%;
+}
+
+.marker-five {
+  left: 55%;
+  top: 81%;
+}
+
+.donor-one {
+  left: 36%;
+  top: 37%;
+}
+
+.donor-two {
+  left: 45%;
+  top: 31%;
+}
+
+.donor-three {
+  left: 48%;
+  top: 47%;
+}
+
+.donor-four {
+  left: 34%;
+  top: 67%;
+}
+
+.donor-five {
+  left: 46%;
+  top: 66%;
+}
+
+.donor-six {
+  left: 40%;
+  top: 79%;
+}
+
+.donor-seven {
+  left: 76%;
+  top: 48%;
+}
+
+
+/* =========================================
+   MAP PANEL
+========================================= */
+
+.map-panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 185px;
+  height: 100%;
+
+  background: rgba(255,255,255,.94);
+
+  padding: 22px 15px;
+}
+
+.map-panel h3 {
+  margin: 0 0 7px;
+  font-size: 13px;
+}
+
+.alert-count {
+  display: block;
+  margin-bottom: 12px;
+
+  color: #737373;
+  font-size: 11px;
+}
+
+.map-alert {
+  padding: 8px;
+  border-radius: 6px;
+  margin-bottom: 7px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.map-alert strong {
+  font-size: 11px;
+}
+
+.map-alert span {
+  font-size: 10px;
+}
+
+.map-alert.critical {
+  background: #fca4a0;
+  color: #5d1818;
+}
+
+.map-alert.high {
+  background: #a7e9e5;
+  color: #164e4b;
+}
+
+.fleet-box {
+  margin-top: 18px;
+  padding-top: 13px;
+  border-top: 1px solid #e2e2e2;
+}
+
+.fleet-box h3 {
+  margin-bottom: 10px;
+}
+
+.fleet-box > div {
+  display: flex;
+  gap: 6px;
+  align-items: baseline;
+  margin-bottom: 8px;
+}
+
+.fleet-box strong {
+  font-size: 19px;
+}
+
+.fleet-box span {
+  color: #777;
+  font-size: 10px;
+}
+
+
+/* =========================================
+   RECENT REQUESTS
+========================================= */
+
+.recent-card {
+  background: #fff;
+
+  border: 1px solid #e6dddd;
+  border-radius: 13px;
+
+  overflow: hidden;
+
+  box-shadow:
+    0 4px 12px rgba(30, 40, 50, 0.06);
+}
+
+.recent-title {
+  padding: 18px 14px 17px;
+}
+
+.recent-title h2 {
+  margin: 0;
+  font-size: 21px;
+}
+
+.request-table-header,
+.request-table-row {
+  display: grid;
+  grid-template-columns:
+    1fr
+    1.4fr
+    1.2fr
+    1.5fr
+    1.3fr;
+
+  align-items: center;
+}
+
+.request-table-header {
+  min-height: 43px;
+
+  padding: 0 17px;
+
+  background: #e5f5fc;
+
+  color: #493a39;
+
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .4px;
+}
+
+.request-table-row {
+  min-height: 53px;
+
+  padding: 0 17px;
+
+  border-top: 1px solid #f0eeee;
+
+  color: #222;
+
+  font-size: 14px;
+}
+
+.blood-group {
+  color: #d31d1d;
+  font-size: 15px;
+}
+
+.urgency {
+  width: fit-content;
+
+  display: inline-flex;
+  align-items: center;
+
+  padding: 5px 12px;
+
+  border-radius: 18px;
+
+  color: white;
+
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.urgency.critical {
+  background: #c91c1c;
+}
+
+.urgency.high {
+  background: #ff7c17;
+}
+
+.urgency.normal {
+  background: #1265a9;
+}
+
+.status {
+  font-weight: 500;
+}
+
+.status.searching {
+  color: #604c49;
+}
+
+.status.matched {
+  color: #006f62;
+}
+
+.status.pending-status {
+  color: #604c49;
+}
+
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 1100px) {
+
+  .admin-sidebar {
+    width: 225px;
+  }
+
+  .admin-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .request-table-header,
+  .request-table-row {
+    grid-template-columns:
+      1fr
+      1fr
+      1fr
+      1.4fr
+      1.2fr;
+  }
+}
+
+
+@media (max-width: 800px) {
+
+  .admin-sidebar {
+    width: 72px;
+  }
+
+  .admin-logo {
+    justify-content: center;
+    padding: 0;
+  }
+
+  .admin-logo > span:last-child {
+    display: none;
+  }
+
+  .admin-nav-item {
+    justify-content: center;
+    padding: 0;
+  }
+
+  .admin-nav-item {
+    font-size: 0;
+  }
+
+  .nav-icon {
+    font-size: 21px;
+  }
+
+  .admin-content {
+    padding: 20px 14px 40px;
+  }
+
+  .map-container {
+    height: 330px;
+  }
+
+  .fake-map {
+    right: 145px;
+  }
+
+  .map-panel {
+    width: 145px;
+  }
+
+}
+
+
+@media (max-width: 600px) {
+
+  .admin-sidebar {
+    display: none;
+  }
+
+  .admin-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-title h1 {
+    font-size: 27px;
+  }
+
+  .map-container {
+    height: 280px;
+  }
+
+  .fake-map {
+    right: 0;
+  }
+
+  .map-panel {
+    display: none;
+  }
+
+  .request-table {
+    overflow-x: auto;
+  }
+
+  .request-table-header,
+  .request-table-row {
+    min-width: 700px;
+  }
+
+}
